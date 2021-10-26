@@ -1,0 +1,37 @@
+# this is read by the standalone daemon and embedded servers
+[server]
+ssl-ca = /etc/mysql/cacert.pem
+ssl-cert = /etc/mysql/server-cert.pem
+ssl-key = /etc/mysql/server-key.pem
+require-secure-transport = on
+
+# this is only for the mysqld standalone daemon
+[mysqld]
+ssl-ca = /etc/mysql/cacert.pem
+ssl-cert = /etc/mysql/server-cert.pem
+ssl-key = /etc/mysql/server-key.pem
+require-secure-transport = on
+
+[embedded]
+ssl-ca = /etc/mysql/cacert.pem
+ssl-cert = /etc/mysql/server-cert.pem
+ssl-key = /etc/mysql/server-key.pem
+require-secure-transport = on
+
+# This group is only read by MariaDB servers, not by MySQL.
+# If you use the same .cnf file for MySQL and MariaDB,
+# you can put MariaDB-only options here
+[mariadb]
+ssl-ca = /etc/mysql/cacert.pem
+ssl-cert = /etc/mysql/server-cert.pem
+ssl-key = /etc/mysql/server-key.pem
+require-secure-transport = on
+
+# This group is only read by MariaDB-10.5 servers.
+# If you use the same .cnf file for MariaDB of different versions,
+# use this group for options that older servers don't understand
+[mariadb-10.5]
+ssl-ca = /etc/mysql/cacert.pem
+ssl-cert = /etc/mysql/server-cert.pem
+ssl-key = /etc/mysql/server-key.pem
+require-secure-transport = on

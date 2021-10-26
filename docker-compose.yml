@@ -1,0 +1,66 @@
+version: "3.9"
+
+services:
+  reverse_proxy:
+    ports:
+      - 80:80
+      - 443:443
+    build: ./reverse_proxy
+    networks:
+        int_net:
+            ipv4_address: 10.0.0.5
+
+  core:
+    build: ./core
+    networks:
+        int_net:
+            ipv4_address: 10.0.0.10
+
+  web:
+    build: ./web
+    networks:
+        int_net:
+            ipv4_address: 10.0.0.20
+  mysql:
+    build: ./mysql
+    networks:
+        int_net:
+            ipv4_address: 10.0.0.30            
+#  mysql:
+#    image: mariadb:latest
+#    environment:
+#        MYSQL_ROOT_PASSWORD: 'No9fohe6aejo9Ohfof6d'
+#        MYSQL_USER: 'root2'
+#        MYSQL_PASSWORD: 'chiMi8axaitheivoo3oh'
+#        MYSQL_DATABASE: 'db'
+#    volumes:
+#        - ./mysql/dump:/docker-entrypoint-initdb.d
+#    networks:
+#        int_net:
+#            ipv4_address: 10.0.0.30
+            
+  logging_store:
+    build: ./logging_store
+    networks:
+        int_net:
+            ipv4_address: 10.0.0.40    
+            
+  logging_view:
+    build: ./logging_view
+    networks:
+        int_net:
+            ipv4_address: 10.0.0.41
+  backup:
+    build: ./backup
+    networks:
+        int_net:
+            ipv4_address: 10.0.0.50    
+
+      
+      
+networks:
+    int_net:
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.0.0.0/24

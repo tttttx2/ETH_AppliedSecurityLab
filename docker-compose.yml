@@ -12,17 +12,27 @@ services:
 
   core:
     build: ./core
+    ports:
+      - 10100:443
+    environment:
+        CA_CERT_PASSWD: "ohpe3yoo3Oap5dohsahya1eeBieweehohseitaet"
     networks:
         int_net:
             ipv4_address: 10.0.0.10
+    volumes:
+      - ./core/data:/data
 
   web:
     build: ./web
+    ports:
+      - 10200:443
     networks:
         int_net:
             ipv4_address: 10.0.0.20
   mysql:
     build: ./mysql
+    ports:
+      - 10300:3306
     networks:
         int_net:
             ipv4_address: 10.0.0.30            
@@ -41,17 +51,23 @@ services:
             
   logging_store:
     build: ./logging_store
+    ports:
+      - 10400:443
     networks:
         int_net:
             ipv4_address: 10.0.0.40    
             
   logging_view:
     build: ./logging_view
+    ports:
+      - 10410:443
     networks:
         int_net:
             ipv4_address: 10.0.0.41
   backup:
     build: ./backup
+    ports:
+      - 10500:443
     networks:
         int_net:
             ipv4_address: 10.0.0.50    

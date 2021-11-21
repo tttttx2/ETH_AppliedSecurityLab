@@ -9,18 +9,48 @@ import os
 import hashlib
 import json
 app = Flask(__name__)
+import mysql.connector
+
+mydb = mysql.connector.connect(
+  host="10.0.0.30",
+  user=os.getenv('MYSQL_USER'),
+  password=os.getenv('MYSQL_PASS'),
+  database="db"
+)
+
 
 @app.route("/")
 def route_hello():
-    return "Hello World from Flask"
+    apihint = """
+Production:
+    POST /login             (email, passwd)
+    POST /verify_cert       (cert)
+    POST /revoke_cert       (token)
+    POST /create_cert       (token)
+    POST /get_cert          (token)
+    POST /admin             (token)
+    GET /generate_crl       (NONE)
+    GET /get_pubca          (NONE)
+    GET /revokelist         (NONE)
+Development:
+    GET /reset_ca           (NONE)
+    """
+    
+    return "You reached core.\n"+apihint
+
 
 @app.route("/login", methods=['POST'])
 def route_login_user():
     email = request.form.get('email')
     passwd = request.form.get('passwd')
+    passwd_sha1 = hashlib.sha1(passwd.encode("UTF-8")).hexdigest()
+    mycursor = mydb.cursor()
+
+    mycursor.execute("SELECT pwd FROM users WHERE email=%s AND pwd=%s" , (email, passwd_sha1,))
+
+    myresult = mycursor.fetchall()
     
-    #TODO check that with DB
-    login = True
+    login = (len(myresult) == 1)
     
     if(login):
         token = gen_token(email) #yes, we're using direct email input here, not parsed
@@ -82,7 +112,10 @@ def route_get_cert():
 
 @app.route("/admin", methods=['POST'])
 def route_admin():
-    #TODO: login token somehow. As it's readonly not much security is needed?
+    #login token somehow. As it's readonly not much security is needed?
+    token = request.form.get('token')
+    if (token != "Eez5dei8AhPa5die9ohR"):
+        return "AUTH FAILED", 403
     total_issued = 0
     total_valid = 0
     total_revoked = 0
@@ -109,7 +142,7 @@ def route_generate_crl():
     log(request.path, request.data)
     return "ERROR GENERATING CRL", 403
 
-@app.route("/revokelist", methods=['POST']) # not really necessary but maybe handy for admin interface?
+@app.route("/revokelist") # not really necessary but maybe handy for admin interface?
 def route_revokelist():
     onlyfiles = [f for f in os.listdir('/data/revoked') if os.path.isfile(os.path.join('/data/revoked', f))]
     return json.dumps(onlyfiles)
@@ -138,8 +171,9 @@ def gen_token(email):
     
 def checkauth(token):
     try:
-        jwt.decode(token, key=os.getenv('JWT_SECRET'), algorithms=['HS256', ])
-        # TODO: see if too old
+        token = jwt.decode(token, key=os.getenv('JWT_SECRET'), algorithms=['HS256', ])
+        if int(time.time()) - int(float(token["time"])) > 60*10: # token validity 10 minutes
+            return False
     except:
         return False
     return True

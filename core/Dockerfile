@@ -12,3 +12,4 @@ RUN cat /usr/local/share/ca-certificates/imovies_internal.crt >> /etc/ssl/certs/
 RUN update-ca-certificates
 
 RUN pip install pyjwt
+RUN pip install mysql-connector-python

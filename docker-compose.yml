@@ -83,6 +83,7 @@ services:
     ports:
       - 10500:443
     environment:
+        SERVICE_NAME: "backup"
         REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
     volumes:
       - ./backup/data:/data

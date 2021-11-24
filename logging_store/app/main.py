@@ -16,7 +16,7 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
-    allowed_services = ["core", "web", "log"]
+    allowed_services = ["core", "web", "backup"]
     if request.method == 'POST':
         logdata = request.form.get('logdata')
         level= request.form.get('level')
@@ -31,14 +31,7 @@ def upload_file():
         file_object.write('{time:"'+str(float(time.time()))+'", service:"'+service+'", level:"'+level+'", data:"'+logdata+'"}\n')
         file_object.close()
         return "log done", 200 #redirect(url_for('download_file', name=filename))
-    return '''
-    <!doctype html>
-    <title>Upload backup File</title>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
+    return '''THE LOG STORAGE THINGY tm'''
     
 @app.route('/view/<service>', methods=['GET'])
 def view_file(service):

@@ -5,6 +5,8 @@ services:
     ports:
       - 80:80
       - 443:443
+    environment:
+        REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
     build: ./reverse_proxy
     networks:
         int_net:
@@ -22,65 +24,72 @@ services:
         MYSQL_USER: "root2"
         MYSQL_PASS: "chiMi8axaitheivoo3oh"
         REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+    volumes:
+      - ./core/data:/data
     networks:
         int_net:
             ipv4_address: 10.0.0.10
-    volumes:
-      - ./core/data:/data
+
 
   web:
     build: ./web
     ports:
       - 10200:443
+    environment:
+        SERVICE_NAME: "web"
+        REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+        MYSQL_USER: "root2"
+        MYSQL_PASS: "chiMi8axaitheivoo3oh"
+
     networks:
         int_net:
             ipv4_address: 10.0.0.20
+
   mysql:
     build: ./mysql
     ports:
       - 10300:3306
+    environment:
+        REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
     networks:
         int_net:
-            ipv4_address: 10.0.0.30            
-#  mysql:
-#    image: mariadb:latest
-#    environment:
-#        MYSQL_ROOT_PASSWORD: 'No9fohe6aejo9Ohfof6d'
-#        MYSQL_USER: 'root2'
-#        MYSQL_PASSWORD: 'chiMi8axaitheivoo3oh'
-#        MYSQL_DATABASE: 'db'
-#    volumes:
-#        - ./mysql/dump:/docker-entrypoint-initdb.d
-#    networks:
-#        int_net:
-#            ipv4_address: 10.0.0.30
-            
+            ipv4_address: 10.0.0.30
+
   logging_store:
     build: ./logging_store
     ports:
       - 10400:443
+    environment:
+        SERVICE_NAME: "log"
+        REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+    volumes:
+      - ./logging_store/data:/data
     networks:
         int_net:
-            ipv4_address: 10.0.0.40    
-            
+            ipv4_address: 10.0.0.40
+
   logging_view:
     build: ./logging_view
     ports:
       - 10410:443
+    environment:
+        REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
     networks:
         int_net:
             ipv4_address: 10.0.0.41
+
   backup:
     build: ./backup
     ports:
       - 10500:443
+    environment:
+        REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
     volumes:
       - ./backup/data:/data
     networks:
         int_net:
             ipv4_address: 10.0.0.50    
 
-      
       
 networks:
     int_net:

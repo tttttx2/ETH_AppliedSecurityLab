@@ -19,6 +19,7 @@ def upload_file():
     allowed_services = ["core", "web", "log"]
     if request.method == 'POST':
         logdata = request.form.get('logdata')
+        level= request.form.get('level')
         service = request.headers['X-SERVICE-NAME']
         if service not in allowed_services:
             return "service not whitelisted", 403
@@ -27,7 +28,7 @@ def upload_file():
             return "failed", 403
         filename = secure_filename(service+".log")#file.filename)
         file_object = open(UPLOAD_FOLDER+"/"+filename, 'a')
-        file_object.write('{time:"'+str(float(time.time()))+'", service:"'+service+'" ,data:"'+logdata+'"}\n')
+        file_object.write('{time:"'+str(float(time.time()))+'", service:"'+service+'", level:"'+level+'", data:"'+logdata+'"}\n')
         file_object.close()
         return "log done", 200 #redirect(url_for('download_file', name=filename))
     return '''

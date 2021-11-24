@@ -68,7 +68,7 @@ def route_verify_cert():
 def route_revoke_cert():
     token = request.form.get('token')
     if(not checkauth(token)):
-        log(request.path, request.data)
+        log(request.path, request.data, "AUTH")
         return "Auth failed", 403
     email_parsed = parse_email(token)
 
@@ -76,14 +76,14 @@ def route_revoke_cert():
     if (status):
         log(request.path, "***CERT REVOKED***")
         return "cert revoked", 200
-    log(request.path, request.data)
+    log(request.path, request.data, "ERROR")
     return "ERROR: REVOKATION FAILED.", 403
 
 @app.route("/create_cert", methods=['POST'])
 def route_create_cert():
     token = request.form.get('token')
     if(not checkauth(token)):
-        log(request.path, request.data)
+        log(request.path, request.data, "AUTH")
         return "Auth failed", 403
     email_parsed = parse_email(token)
     
@@ -91,21 +91,21 @@ def route_create_cert():
     if (status):
         log(request.path, "***CERT GENERATED***")
         return "cert created", 200
-    log(request.path, request.data)
+    log(request.path, request.data, "ERROR")
     return "ERROR: GENERATION FAILED.", 403
 
 @app.route("/get_cert", methods=['POST'])
 def route_get_cert():
     token = request.form.get('token')
     if(not checkauth(token)):
-        log(request.path, request.data)
+        log(request.path, request.data, "AUTH")
         return "Auth failed", 403
     email_parsed = parse_email(token)
     
     sernr=get_sernr_from_email(email_parsed)
     if(sernr == False):
         print("ERROR downloading certificate!")
-        log(request.path, request.data)
+        log(request.path, request.data, "ERROR")
         return 'ERROR downloading certificate', 403
     log(request.path, "***CERT DOWNLOADED***")
     return send_file('/data/issued/'+sernr+'.pfx', as_attachment=True), 200
@@ -141,7 +141,7 @@ def route_generate_crl():
     if(returncode == 0):
         log(request.path, "***CRL GENERATED***")
         return send_file('/data/crl.pem', as_attachment=True), 200
-    log(request.path, request.data)
+    log(request.path, request.data, "ERROR")
     return "ERROR GENERATING CRL", 403
 
 @app.route("/revokelist") # not really necessary but maybe handy for admin interface?
@@ -156,6 +156,7 @@ def route_get_pubca():
 @app.route("/reset_ca", methods=['GET'])
 # TODO: DISABLE AFTER DEVELOPMENT!
 def route_reset_ca():
+    log(request.path, "***RESETTING CA***")
     os.system('echo "00" > /data/sernumber')
     os.system('echo "00" > /data/crlnumber')
     os.system('echo -n "" > /data/index.txt')
@@ -199,12 +200,13 @@ def backup():
     r = requests.post('https://10.0.0.50/', files=files, headers=headers)        
     return
 
-def log(action, payload):
+def log(action, payload, level="INFO"):
     if (payload):
         payload = base64.b64encode(payload.encode("utf-8"))
     else:
         payload = base64.b64encode("NO PAYLOAD LOGGED".encode("utf-8"))
-    #TODO: send to logging server
+    headers = {'X-SERVICE-NAME': os.getenv('SERVICE_NAME')}
+    r = requests.post('https://10.0.0.40/', data={'logdata':payload, 'level':level}, headers=headers)
     return
 
 def get_sernr_from_email(email_parsed):

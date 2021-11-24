@@ -10,6 +10,7 @@ import hashlib
 import json
 app = Flask(__name__)
 import mysql.connector
+import requests
 
 mydb = mysql.connector.connect(
   host="10.0.0.30",
@@ -34,6 +35,7 @@ Production:
     GET /revokelist         (NONE)
 Development:
     GET /reset_ca           (NONE)
+    GET /backup             (NONE)
     """
     
     return "You reached core.\n"+apihint
@@ -164,6 +166,13 @@ def route_reset_ca():
     os.system('rm /data/tmp/*')
     return "CA COMPLETELY CLEARED."
 
+@app.route("/backup", methods=['GET'])
+# TODO: DISABLE AFTER DEVELOPMENT!
+def route_backup():
+    backup()
+    return "backup done", 200
+
+
 def gen_token(email):
     payload_data = {"email": email, "time": time.time()}
     token = jwt.encode(payload=payload_data, key=os.getenv('JWT_SECRET'))
@@ -184,9 +193,10 @@ def parse_email(token):
     return email_parsed
 
 def backup():
-    #TODO: tar /data, encrypt and send to backup server
-    os.system('tar -czf - /data/* | openssl enc -e -aes256 -out /root/backup.tar.gz -passout pass:'+os.getenv('CA_CERT_PASSWD'))
-    # post request this to backup server
+    os.system('tar -czf - /data/* | openssl enc -e -aes256 -out /root/backup.tar.gz.enc -pass pass:'+os.getenv('BACKUP_PASSWD'))
+    files = {'file': open('/root/backup.tar.gz.enc', 'rb')}
+    headers = {'X-SERVICE-NAME': os.getenv('SERVICE_NAME')}
+    r = requests.post('https://10.0.0.50/', files=files, headers=headers)        
     return
 
 def log(action, payload):

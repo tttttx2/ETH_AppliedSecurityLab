@@ -13,3 +13,4 @@ RUN update-ca-certificates
 
 RUN pip install pyjwt
 RUN pip install mysql-connector-python
+RUN pip install requests

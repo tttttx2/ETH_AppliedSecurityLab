@@ -15,7 +15,13 @@ services:
     ports:
       - 10100:443
     environment:
+        SERVICE_NAME: "core"
         CA_CERT_PASSWD: "ohpe3yoo3Oap5dohsahya1eeBieweehohseitaet"
+        JWT_SECRET: "Ohtheisoashuxoolae6oocaiseepeTheiweeGhahFe8eith8eoqu0quu8cue"
+        BACKUP_PASSWD: "paikoothenahKoodohfaizu9Yei0XaiN7zeiM5ga"
+        MYSQL_USER: "root2"
+        MYSQL_PASS: "chiMi8axaitheivoo3oh"
+        REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
     networks:
         int_net:
             ipv4_address: 10.0.0.10
@@ -68,6 +74,8 @@ services:
     build: ./backup
     ports:
       - 10500:443
+    volumes:
+      - ./backup/data:/data
     networks:
         int_net:
             ipv4_address: 10.0.0.50    

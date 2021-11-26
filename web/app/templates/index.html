@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <title>Imovie - login page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <div class="container">
+      <form method="post">
+        <button name="create" type="submit" value="1">Create</button>
+        <button name="download" type="submit" value="1">Download</button>
+        <button name="revoke" type="submit" value="1">Revoke</button>
+        <button name="logout" type="submit" value="1">logout</button>
+      </form>
+      {% if status %}
+        <p class="status"><strong>Status:</strong> {{ status }}
+      {% endif %}
+    </div>
+  </body>
+</html>

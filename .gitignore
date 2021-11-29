@@ -1,0 +1,2 @@
+logging_rsyslog/logs/*
+logging_rsyslog/work/*

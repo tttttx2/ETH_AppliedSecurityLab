@@ -68,6 +68,23 @@ services:
         int_net:
             ipv4_address: 10.0.0.40
 
+  logging_rsyslog:
+    build: ./logging_rsyslog
+    ports:
+      - 10402:443
+      - 514:514
+      - 1601:1601
+    environment:
+        SERVICE_NAME: "log_rsyslog"
+        REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+    volumes:
+      - ./logging_rsyslog/logs:/logs
+      - ./logging_rsyslog/work:/work
+      - ./logging_rsyslog/config:/config
+    networks:
+        int_net:
+            ipv4_address: 10.0.0.42
+            
   logging_view:
     build: ./logging_view
     ports:

@@ -91,6 +91,8 @@ services:
       - 10410:443
     environment:
         REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+    volumes:
+      - ./logging_rsyslog/logs:/logs:ro
     networks:
         int_net:
             ipv4_address: 10.0.0.41

@@ -1,23 +1,27 @@
+#------
+# VM 99
 version: "3.9"
-
-# VM 00
 services:
+#------
+# VM 00
   reverse_proxy:
     ports:
       - 80:80
       - 443:443
+      - 10050:444
     environment:
         REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
     build: ./reverse_proxy
     networks:
         int_net:
             ipv4_address: 10.0.0.5
-
+#------
 # VM 01
   core:
     build: ./core
     ports:
       - 10100:443
+      #EXPOSETHIS
     environment:
         SERVICE_NAME: "core"
         CA_CERT_PASSWD: "ohpe3yoo3Oap5dohsahya1eeBieweehohseitaet"
@@ -31,12 +35,13 @@ services:
     networks:
         int_net:
             ipv4_address: 10.0.0.10
-
+#------
 # VM 02
   web:
     build: ./web
     ports:
       - 10200:443
+      #EXPOSETHIS
     environment:
         SERVICE_NAME: "web"
         REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
@@ -46,23 +51,26 @@ services:
     networks:
         int_net:
             ipv4_address: 10.0.0.20
-
+#------
 # VM 03
   mysql:
     build: ./mysql
     ports:
+      - 3306:3306
       - 10300:3306
+      #EXPOSETHIS
     environment:
         REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
     networks:
         int_net:
             ipv4_address: 10.0.0.30
-
+#------
 # VM 04
   logging_store:
     build: ./logging_store
     ports:
       - 10400:443
+      #EXPOSETHIS
     environment:
         SERVICE_NAME: "log"
         BACKUP_PASSWD: "eeQua5yiec9xee1Shoveihukoihooze6oa3caQuo"
@@ -72,7 +80,7 @@ services:
     networks:
         int_net:
             ipv4_address: 10.0.0.40
-
+#+++
   logging_rsyslog:
     build: ./logging_rsyslog
     ports:
@@ -89,10 +97,11 @@ services:
     networks:
         int_net:
             ipv4_address: 10.0.0.42
-            
+#+++
   logging_view:
     build: ./logging_view
     ports:
+      #EXPOSETHIS
       - 10410:443
     environment:
         REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
@@ -101,11 +110,12 @@ services:
     networks:
         int_net:
             ipv4_address: 10.0.0.41
-
+#------
 # VM 05
   backup:
     build: ./backup
     ports:
+      #EXPOSETHIS
       - 10500:443
     environment:
         SERVICE_NAME: "backup"
@@ -115,7 +125,8 @@ services:
     networks:
         int_net:
             ipv4_address: 10.0.0.50    
-
+#------
+# VM 99
 # network config      
 networks:
     int_net:

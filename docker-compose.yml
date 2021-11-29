@@ -1,5 +1,6 @@
 version: "3.9"
 
+# VM 00
 services:
   reverse_proxy:
     ports:
@@ -12,6 +13,7 @@ services:
         int_net:
             ipv4_address: 10.0.0.5
 
+# VM 01
   core:
     build: ./core
     ports:
@@ -30,7 +32,7 @@ services:
         int_net:
             ipv4_address: 10.0.0.10
 
-
+# VM 02
   web:
     build: ./web
     ports:
@@ -45,6 +47,7 @@ services:
         int_net:
             ipv4_address: 10.0.0.20
 
+# VM 03
   mysql:
     build: ./mysql
     ports:
@@ -55,15 +58,17 @@ services:
         int_net:
             ipv4_address: 10.0.0.30
 
+# VM 04
   logging_store:
     build: ./logging_store
     ports:
       - 10400:443
     environment:
         SERVICE_NAME: "log"
+        BACKUP_PASSWD: "eeQua5yiec9xee1Shoveihukoihooze6oa3caQuo"
         REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
     volumes:
-      - ./logging_store/data:/data
+      - ./logging_rsyslog/logs:/data:ro
     networks:
         int_net:
             ipv4_address: 10.0.0.40
@@ -97,6 +102,7 @@ services:
         int_net:
             ipv4_address: 10.0.0.41
 
+# VM 05
   backup:
     build: ./backup
     ports:
@@ -110,7 +116,7 @@ services:
         int_net:
             ipv4_address: 10.0.0.50    
 
-      
+# network config      
 networks:
     int_net:
         ipam:

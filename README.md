@@ -16,3 +16,19 @@ Access to the logging server is on [https://admin:uoVei2phooZ3ateevahf@logs.imov
 # letsencrypt certificate
 sudo certbot certonly --manual --preferred-challenges=dns -d *.imovies.ch
 
+
+# VMs
+## 00 - proxy
+reverse_proxy
+## 01 - core
+core
+## 02 - web
+web
+## 03 - mysql
+mysql
+## 04 - log
+logging_view
+logging_store
+logging_rsyslog
+## 05 - backup
+backup

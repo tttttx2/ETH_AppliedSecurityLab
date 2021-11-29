@@ -56,7 +56,9 @@ def route_login_user():
     
     if(login):
         token = gen_token(email) #yes, we're using direct email input here, not parsed
+        log(request.path, "AUTH SUCCESSFUL: "+email, "AUTH")
         return token, 200
+    log(request.path, "AUTH FAILED: "+email, "AUTH")
     return "AUTH FAILED", 403
 
 @app.route("/verify_cert", methods=['POST'])
@@ -201,13 +203,24 @@ def backup():
     return
 
 def log(action, payload, level="INFO"):
+    
     if (payload):
-        payload = base64.b64encode(payload.encode("utf-8"))
+        payload = payload.encode("utf-8")
     else:
-        payload = base64.b64encode("NO PAYLOAD LOGGED".encode("utf-8"))
-    headers = {'X-SERVICE-NAME': os.getenv('SERVICE_NAME')}
-    r = requests.post('https://10.0.0.40/', data={'logdata':payload, 'level':level}, headers=headers)
+        payload = "NO PAYLOAD LOGGED".encode("utf-8")
+    
+    file_object = open('/var/log/core.log', 'a')
+    file_object.write(str(level) + " - " + str(payload) + "\n\r")
+    file_object.close()
     return
+
+    #if (payload):
+        #payload = base64.b64encode(payload.encode("utf-8"))
+    #else:
+        #payload = base64.b64encode("NO PAYLOAD LOGGED".encode("utf-8"))
+    #headers = {'X-SERVICE-NAME': os.getenv('SERVICE_NAME')}
+    #r = requests.post('https://10.0.0.40/', data={'logdata':payload, 'level':level}, headers=headers)
+    #return
 
 def get_sernr_from_email(email_parsed):
     with open('/data/index.txt', 'r') as read_obj:

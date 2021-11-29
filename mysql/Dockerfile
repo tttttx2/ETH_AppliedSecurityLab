@@ -14,3 +14,11 @@ COPY ./dump/* /docker-entrypoint-initdb.d
 #COPY ./imovies_internal.crt /etc/mysql/cacert.pem
 #COPY ./ssl/*.key /etc/mysql/server-key.pem
 #COPY ./ssl/*.crt /etc/mysql/server-cert.pem
+
+RUN apt update
+RUN apt install -y rsyslog
+COPY ./rsyslog.conf /etc/rsyslog.conf
+
+COPY ./prestart.sh /prestart.sh
+RUN cp /usr/local/bin/docker-entrypoint.sh /docker-entrypoint.sh
+RUN cat /prestart.sh /docker-entrypoint.sh > /usr/local/bin/docker-entrypoint.sh

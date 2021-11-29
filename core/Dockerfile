@@ -14,3 +14,17 @@ RUN update-ca-certificates
 RUN pip install pyjwt
 RUN pip install mysql-connector-python
 RUN pip install requests
+
+RUN apt update
+RUN apt install -y rsyslog
+COPY ./rsyslog.conf /etc/rsyslog.conf
+
+RUN rm /var/log/nginx/access.log
+RUN rm /var/log/nginx/error.log
+RUN touch /var/log/nginx/access.log
+RUN touch /var/log/nginx/error.log
+
+RUN touch /var/log/application.log
+
+
+

@@ -23,5 +23,5 @@ RUN touch /var/log/nginx/nostd.error.log
 
 COPY 90_start_rsyslog.sh /docker-entrypoint.d
 
-RUN ["service", "rsyslog", "start"]
+#RUN ["service", "rsyslog", "start"]
 #ENTRYPOINT ["/bin/sh", "/docker-entrypoint.sh"]

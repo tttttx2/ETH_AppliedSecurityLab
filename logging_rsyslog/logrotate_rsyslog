@@ -1,0 +1,10 @@
+/logs/hosts/*/*.log {
+    rotate 5
+    daily
+    copytruncate
+    sharedscripts
+    postrotate
+        /etc/init.d/rsyslog reload &>/dev/null || true
+    endscript
+}
+ 

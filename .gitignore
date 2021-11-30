@@ -2,3 +2,5 @@ logging_rsyslog/logs/*
 logging_rsyslog/work/*
 mysql/data
 mysql/data/*
+
+backup/data/*.enc

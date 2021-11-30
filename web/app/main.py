@@ -38,13 +38,18 @@ def route_index():
                     status = r.text
             elif "edit_info" in request.form: 
                 if request.form['firstname'].strip() != user_info['firstname'] or \
+                   request.form['email'].strip() != user_info['email'] or \
                    request.form['lastname'].strip()  != user_info['lastname']:
                     files = {
                         'token': (None, token),
                         'firstname': (None, request.form['firstname'].strip()),
-                        'lastname': (None, request.form['lastname'].strip())
+                        'lastname': (None, request.form['lastname'].strip()),
+                        'email': (None, request.form['email'].strip())
+                        #'passwd': (None, request.form['passwd'].strip())
                     }
                     r = requests.post('https://10.0.0.10/edit_info',headers=headers,files=files)
+                    r = requests.post('https://10.0.0.10/get_info',headers=headers,files=files)
+                    user_info = r.json()[0]
                     return redirect(request.referrer)
             elif "logout" in request.form: 
                 resp = make_response(redirect('/login'))
@@ -53,7 +58,10 @@ def route_index():
             else: 
                 print(request.form)
                 status = 'Invalid Operation!'
-        return render_template('index.html',status=status,user_info=user_info)
+        statuscode = 200
+        if (status != None):
+            statuscode = 403
+        return make_response(render_template('index.html',status=status,user_info=user_info), statuscode)
     else:
         return redirect(url_for('route_login'))
 

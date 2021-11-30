@@ -73,10 +73,13 @@ def route_edit_info():
 
     firstname = request.form.get('firstname')
     lastname = request.form.get('lastname')
+    email = parse_email_raw(request.form.get('email'))
+    if (email==False):
+        return "Email security check failed", 403
 
     mycursor = mydb.cursor()
 
-    mycursor.execute("UPDATE users SET firstname=%s, lastname=%s WHERE email=%s" , (firstname, lastname, email_parsed, ))
+    mycursor.execute("UPDATE users SET firstname=%s, lastname=%s, email=%s WHERE email=%s" , (firstname, lastname, email, email_parsed, ))
     return "Edit info success", 200
 
 
@@ -234,8 +237,13 @@ def checkauth(token):
 
 def parse_email(token):
     email = jwt.decode(token, key=os.getenv('JWT_SECRET'), algorithms=['HS256', ])["email"]
+    email_parsed = parse_email_raw(email)
+    return email_parsed
+
+def parse_email_raw(email):
     email_parsed = email #TODO: filter strange email addresses like "asdf+comment@asdf.asdf and parse for secruity
     return email_parsed
+
 
 def backup():
     os.system('tar -czf - /data/* | openssl enc -e -aes256 -out /root/backup.tar.gz.enc -pass pass:'+os.getenv('BACKUP_PASSWD'))
@@ -314,4 +322,4 @@ def revoke_certificate(email_parsed):
 
 if __name__ == "__main__":
     # Only for debugging while developing
-    app.run(host='0.0.0.0', debug=True, port=80)
+    app.run(host='0.0.0.0', debug=False, port=80)

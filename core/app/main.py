@@ -24,7 +24,8 @@ mydb = mysql.connector.connect(
 def route_hello():
     apihint = """
 Production:
-    POST /login             (email, passwd)
+    POST /login             (uid, passwd)
+    POST /get_info          (token)
     POST /verify_cert       (cert)
     POST /revoke_cert       (token)
     POST /create_cert       (token)
@@ -43,23 +44,60 @@ Development:
 
 @app.route("/login", methods=['POST'])
 def route_login_user():
-    email = request.form.get('email')
+    uid = request.form.get('uid')
     passwd = request.form.get('passwd')
     passwd_sha1 = hashlib.sha1(passwd.encode("UTF-8")).hexdigest()
     mycursor = mydb.cursor()
 
-    mycursor.execute("SELECT pwd FROM users WHERE email=%s AND pwd=%s" , (email, passwd_sha1,))
+    mycursor.execute("SELECT email FROM users WHERE uid=%s AND pwd=%s" , (uid, passwd_sha1,))
 
     myresult = mycursor.fetchall()
     
     login = (len(myresult) == 1)
     
     if(login):
+        email = myresult[0][0]
+        print(email)
         token = gen_token(email) #yes, we're using direct email input here, not parsed
         log(request.path, "AUTH SUCCESSFUL: "+email, "AUTH")
         return token, 200
     log(request.path, "AUTH FAILED: "+email, "AUTH")
     return "AUTH FAILED", 403
+
+@app.route("/edit_info", methods=['POST'])
+def route_edit_info():
+    token = request.form.get('token')
+    if(not checkauth(token)):
+        log(request.path, request.data, "AUTH")
+        return "Auth failed", 403
+    email_parsed = parse_email(token)
+
+    firstname = request.form.get('firstname')
+    lastname = request.form.get('lastname')
+
+    mycursor = mydb.cursor()
+
+    mycursor.execute("UPDATE users SET firstname=%s, lastname=%s WHERE email=%s" , (firstname, lastname, email_parsed, ))
+    return "Edit info success", 200
+
+
+@app.route("/get_info", methods=['POST'])
+def route_get_info():
+    token = request.form.get('token')
+    if(not checkauth(token)):
+        log(request.path, request.data, "AUTH")
+        return "Auth failed", 403
+    email_parsed = parse_email(token)
+
+    mycursor = mydb.cursor()
+
+    mycursor.execute("SELECT uid, lastname, firstname, email FROM users WHERE email=%s" , (email_parsed, ))
+    row_headers=[x[0] for x in mycursor.description]
+    myresult = mycursor.fetchall()
+    json_data=[]
+    for result in myresult:
+        json_data.append(dict(zip(row_headers,result)))
+    return json.dumps(json_data), 200
 
 @app.route("/verify_cert", methods=['POST'])
 def route_verify_cert():

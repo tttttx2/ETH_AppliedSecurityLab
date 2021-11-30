@@ -1,22 +1,32 @@
 <html>
   <head>
-    <title>Imovie - login page</title>
+    <title>iMovies - login page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet" id="bootstrap-css">
+    <link href="{{ url_for('static', filename='login.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
   </head>
   <body>
-    <div class="container">
-      <h1>Please login</h1>
-      <br>
-      <form action="" method="post">
-        <input type="text" placeholder="Email" name="email" value="{{
-          request.form.email }}">
-         <input type="password" placeholder="Password" name="passwd" value="{{
-          request.form.passwd }}">
-        <input class="btn btn-default" type="submit" value="Login">
-      </form>
-      {% if error %}
-        <p class="error"><strong>Error:</strong> {{ error }}
-      {% endif %}
-    </div>
+	<div class="wrapper fadeInDown">
+      <div id="formContent">
+        <!-- Tabs Titles -->
+        <div class="fadeIn first">
+          <h2>iMovies</h2>
+        </div>
+        <!-- Login Form -->
+        <form method="post">
+          <input type="text" id="login" class="fadeIn second" name="uid" placeholder="User ID">
+          <input type="password" id="password" class="fadeIn third" name="passwd" placeholder="Password">
+
+          <input type="submit" class="fadeIn fourth" value="Login">
+        </form>
+		{% if error %}
+        <!-- Error -->
+        <div id="formFooter">
+          <p class="error"><strong>Error: </strong> {{ error }}</p>
+        </div>
+        {% endif %}
+      </div>
+	</div>
   </body>
 </html>

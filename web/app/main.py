@@ -34,6 +34,17 @@ def index():
                 r = requests.post('https://10.0.0.10/revoke_cert',headers=headers,files=files)
                 if r.status_code is not 200:
                     status = r.text
+            elif "edit_info" in request.form: 
+                if request.form['firstname'].strip() != user_info['firstname'] or \
+                   request.form['lastname'].strip()  != user_info['lastname']:
+                    print(request.form['firstname'].strip())
+                    files = {
+                        'token': (None, token),
+                        'firstname': (None, request.form['firstname'].strip()),
+                        'lastname': (None, request.form['lastname'].strip())
+                    }
+                    r = requests.post('https://10.0.0.10/edit_info',headers=headers,files=files)
+                    return redirect(request.referrer)
             elif "logout" in request.form: 
                 resp = make_response(redirect('/login'))
                 resp.set_cookie('token', '', expires=0)

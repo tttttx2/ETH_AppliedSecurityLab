@@ -62,6 +62,23 @@ def route_login_user():
         return token, 200
     return "AUTH FAILED", 403
 
+@app.route("/edit_info", methods=['POST'])
+def route_edit_info():
+    token = request.form.get('token')
+    if(not checkauth(token)):
+        log(request.path, request.data, "AUTH")
+        return "Auth failed", 403
+    email_parsed = parse_email(token)
+
+    firstname = request.form.get('firstname')
+    lastname = request.form.get('lastname')
+
+    mycursor = mydb.cursor()
+
+    mycursor.execute("UPDATE users SET firstname=%s, lastname=%s WHERE email=%s" , (firstname, lastname, email_parsed, ))
+    return "Edit info success", 200
+
+
 @app.route("/get_info", methods=['POST'])
 def route_get_info():
     token = request.form.get('token')
@@ -72,24 +89,13 @@ def route_get_info():
 
     mycursor = mydb.cursor()
 
-    mycursor.execute("SELECT uid, lastname, firstname, email  FROM users WHERE email=%s" , (email_parsed, ))
+    mycursor.execute("SELECT uid, lastname, firstname, email FROM users WHERE email=%s" , (email_parsed, ))
     row_headers=[x[0] for x in mycursor.description]
     myresult = mycursor.fetchall()
     json_data=[]
     for result in myresult:
         json_data.append(dict(zip(row_headers,result)))
     return json.dumps(json_data), 200
-
-    '''
-    if (status):
-        log(request.path, "***CERT GENERATED***")
-        return "cert created", 200
-    log(request.path, request.data, "ERROR")
-    return "ERROR: GENERATION FAILED.", 403
-
-    '''
-    return "Auth failed", 403
-
 
 @app.route("/verify_cert", methods=['POST'])
 def route_verify_cert():

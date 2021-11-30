@@ -147,7 +147,9 @@ def route_get_cert():
         log(request.path, request.data, "ERROR")
         return 'ERROR downloading certificate', 403
     log(request.path, "***CERT DOWNLOADED***")
-    return send_file('/data/issued/'+sernr+'.pfx', as_attachment=True), 200
+    with open('/data/issued/'+sernr+'.pfx', mode='rb') as file: # b is important -> binary
+        fileContent = file.read()
+    return fileContent, 200#send_file('/data/issued/'+sernr+'.pfx', as_attachment=True), 200
     
     return "ERROR GENERATING CRL", 403
 

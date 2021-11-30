@@ -64,16 +64,32 @@ services:
       #EXPOSETHIS
     environment:
         REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+    volumes:
+     - ./mysql/data:/var/lib/mysql
     networks:
         int_net:
             ipv4_address: 10.0.0.30
+#+++            
+  mysql_store:
+    build: ./mysql_store
+    ports:
+      #EXPOSETHIS
+      - 10301:443
+    environment:
+        SERVICE_NAME: "mysql"
+        BACKUP_PASSWD: "Eibei0ceigaibeePheiPuwaiJ9aikoh4aem2eiYe"
+        REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+        MYSQL_USER: "root2"
+        MYSQL_PASS: "chiMi8axaitheivoo3oh"
+    networks:
+        int_net:
+            ipv4_address: 10.0.0.31
 #------
 # VM 04
   logging_store:
     build: ./logging_store
     ports:
       - 10400:443
-      #EXPOSETHIS
     environment:
         SERVICE_NAME: "log"
         BACKUP_PASSWD: "eeQua5yiec9xee1Shoveihukoihooze6oa3caQuo"

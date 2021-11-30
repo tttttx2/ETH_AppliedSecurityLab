@@ -17,7 +17,7 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
-    allowed_services = ["core", "web", "log"]
+    allowed_services = ["core", "web", "log", "mysql"]
     if request.method == 'POST':
         file = request.files['file']
         service = request.headers['X-SERVICE-NAME']

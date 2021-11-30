@@ -13,3 +13,4 @@ RUN update-ca-certificates
 RUN pip install requests
 RUN apt update
 RUN apt install -y default-mysql-client cron
+

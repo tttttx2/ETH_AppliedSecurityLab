@@ -16,7 +16,8 @@ RUN pip install mysql-connector-python
 RUN pip install requests
 
 RUN apt update
-RUN apt install -y rsyslog
+RUN apt install -y rsyslog default-mysql-client cron
+
 COPY ./rsyslog.conf /etc/rsyslog.conf
 
 RUN rm /var/log/nginx/access.log

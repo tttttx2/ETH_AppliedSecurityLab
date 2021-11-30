@@ -8,7 +8,7 @@ import json
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
-def index():
+def route_index():
     status = None
     token = request.cookies.get('token')
     if token is not None:
@@ -39,7 +39,6 @@ def index():
             elif "edit_info" in request.form: 
                 if request.form['firstname'].strip() != user_info['firstname'] or \
                    request.form['lastname'].strip()  != user_info['lastname']:
-                    print(request.form['firstname'].strip())
                     files = {
                         'token': (None, token),
                         'firstname': (None, request.form['firstname'].strip()),
@@ -56,11 +55,11 @@ def index():
                 status = 'Invalid Operation!'
         return render_template('index.html',status=status,user_info=user_info)
     else:
-        return redirect(url_for('login'))
+        return redirect(url_for('route_login'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+def route_login():
     error = None
     if request.method == 'POST':
         headers = {'X-SERVICE-NAME': os.getenv('SERVICE_NAME')}
@@ -137,6 +136,13 @@ def download_crl():
         open(path, 'wb').write(r.content)
         
     return send_file(path, as_attachment=True), 200
+
+@app.route('/revokelist')
+def route_revokelist():
+    headers = {'X-SERVICE-NAME': os.getenv('SERVICE_NAME')}
+    r = requests.get('https://10.0.0.10/revokelist',headers=headers)
+    return json.dumps(r.json()), 200
+
 
 if __name__ == "__main__":
     # Only for debugging while developing

@@ -187,8 +187,11 @@ def route_generate_crl():
 
 @app.route("/revokelist") # not really necessary but maybe handy for admin interface?
 def route_revokelist():
-    onlyfiles = [f for f in os.listdir('/data/revoked') if os.path.isfile(os.path.join('/data/revoked', f))]
-    return json.dumps(onlyfiles)
+    revokelist = {}
+    for f in os.listdir('/data/revoked'):
+        if os.path.isfile(os.path.join('/data/revoked', f)) and not f.startswith('.'):
+            revokelist[f] = os.popen('openssl pkcs12 -in /data/revoked/'+f+' -passin pass: -clcerts -nokeys | openssl x509').read()
+    return json.dumps(revokelist), 200
 
 @app.route("/get_pubca") #should be called from main landingpage webserver with low periodicity to publish newest CA public key
 def route_get_pubca():

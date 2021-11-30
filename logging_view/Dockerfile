@@ -8,7 +8,6 @@ COPY ./includes/ /etc/nginx/includes/
 
 COPY ./ssl/ /etc/ssl/certs/nginx/
 
-COPY ./app/ /app/
 
 COPY imovies_internal.crt /usr/local/share/ca-certificates/imovies_internal.crt
 RUN chmod 644 /usr/local/share/ca-certificates/imovies_internal.crt

@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
 from flask import send_file
+from urllib import parse
 import jwt
 import time
 
@@ -64,7 +65,15 @@ def route_login_user():
 @app.route("/verify_cert", methods=['POST'])
 def route_verify_cert():
     #TODO
-    return "cert valid"
+    #return "cert valid"
+    cert_enc = request.form.get('cert')
+
+    # Client certificate in PEM format
+    cert = parse.unquote(cert_enc)
+
+    # Check if certificate exsits locally,
+    # If yes, return associated email-address
+    # return json.dumps({"email"}) 
 
 @app.route("/revoke_cert", methods=['POST'])
 def route_revoke_cert():

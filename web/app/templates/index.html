@@ -1,19 +1,66 @@
 <html>
   <head>
-    <title>Imovie - login page</title>
+    <title>iMovies</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet" id="bootstrap-css">
+	<link href="{{ url_for('static', filename='index.css')}}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
   </head>
   <body>
+    <form method="POST" id="edit_info"></form>
     <div class="container">
-      <form method="post">
-        <button name="create" type="submit" value="1">Create</button>
-        <button name="download" type="submit" value="1">Download</button>
-        <button name="revoke" type="submit" value="1">Revoke</button>
-        <button name="logout" type="submit" value="1">logout</button>
-      </form>
-      {% if status %}
-        <p class="status"><strong>Status:</strong> {{ status }}
-      {% endif %}
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
+   
+          <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Hi, {{user_info['uid']}}</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class=" col-md-9 col-lg-9 "> 
+                  <table class="table table-user-information">
+                    <tbody>
+                      <tr>
+                        <td>User ID:</td>
+                        <td>{{user_info['uid']}}</td>
+                      </tr>
+                      <tr>
+                        <td>First Name:</td>
+                        <td><input type="text" name="firstname" value={{user_info['firstname']}} form=edit_info></td>
+                      </tr>
+                      <tr>
+                        <td>Last Name:</td>
+                        <td><input type="text" name="lastname" value={{user_info['lastname']}} form=edit_info></td>
+                      </tr>
+                      <tr>
+                        <td>Email</td>
+                        <td><a href="mailto:{{user_info['email']}}">{{user_info['email']}}</a></td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <form method="post">
+                    <button name="create" type="submit" value="1" class="btn btn-primary">Create</button>
+                    <button name="download" type="submit" value="1" class="btn btn-primary">Download</button>
+                    <button name="revoke" type="submit" value="1" class="btn btn-primary">Revoke</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="panel-footer text-right">
+              {% if status %}
+              <span class="status pull-left"><strong>Status: </strong>{{ status }}</span>
+              {% endif %}
+              <button name="edit_info" type="submit" value="1" class="btn btn-sm btn-warning" form="edit_info">Edit info</button>
+              <form method="post" style="display:inline">
+                <button name="logout" type="submit" value="1" class="btn btn-sm btn-danger">Logout</button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

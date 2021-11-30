@@ -3,6 +3,8 @@ from flask import send_file
 from io import BytesIO
 import os
 import requests
+import time
+import json
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -76,6 +78,65 @@ def login():
     resp = make_response(render_template('login.html', error=error))
     resp.set_cookie('token', '', expires=0)
     return resp
+
+@app.route('/admin', methods=['GET', 'POST'])
+def login_admin():
+    error = None
+    if request.method == 'POST':
+        headers = {'X-SERVICE-NAME': os.getenv('SERVICE_NAME')}
+        files = {
+            'admintoken': (None, request.form['passwd']),
+        }
+        r = requests.post('https://10.0.0.10/admin',headers=headers,files=files)
+        if r.status_code is not 200:
+            error = r.text
+        else:
+            resp = make_response(redirect('/admin/stats'))
+            resp.set_cookie('admintoken', request.form['passwd'])
+            return resp
+    resp = make_response(render_template('adminlogin.html', error=error))
+    resp.set_cookie('admintoken', '', expires=0)
+    return resp
+
+@app.route('/admin/stats', methods=['GET', 'POST'])
+def stats_admin():
+    if request.method == 'POST':
+        resp = make_response(redirect('/admin'))
+        resp.set_cookie('admintoken', '')
+        return resp
+    
+    headers = {'X-SERVICE-NAME': os.getenv('SERVICE_NAME')}
+    admintoken = request.cookies.get('admintoken')
+    if not admintoken or admintoken == '':
+        resp = make_response(redirect('/admin'))
+        return resp
+    print(admintoken)
+    files = {
+        'admintoken': (None, admintoken),
+    }
+    r = requests.post('https://10.0.0.10/admin',headers=headers,files=files)
+    if r.status_code is not 200:
+        resp = make_response(redirect('/admin'))
+        return resp
+    else:
+        print(r.text)
+        resp = make_response(render_template('adminstats.html', stats=json.loads(r.text)))
+        return resp
+
+@app.route('/crl', methods=['GET'])
+def download_crl():
+    path = '/crl.pem'
+    exists = os.path.isfile(path)
+    if not exists:
+        r = requests.get('https://10.0.0.10/generate_crl', allow_redirects=True)
+        open(path, 'wb').write(r.content)
+        
+    modifytime = os.path.getmtime(path)
+    if time.time() - modifytime > 1000:
+        r = requests.get('https://10.0.0.10/generate_crl', allow_redirects=True)
+        open(path, 'wb').write(r.content)
+        
+    return send_file(path, as_attachment=True), 200
 
 if __name__ == "__main__":
     # Only for debugging while developing

@@ -54,14 +54,13 @@ def route_login_user():
     myresult = mycursor.fetchall()
     
     login = (len(myresult) == 1)
-    
     if(login):
         email = myresult[0][0]
         print(email)
         token = gen_token(email) #yes, we're using direct email input here, not parsed
         log(request.path, "AUTH SUCCESSFUL: "+email, "AUTH")
         return token, 200
-    log(request.path, "AUTH FAILED: "+email, "AUTH")
+    log(request.path, "AUTH FAILED: "+uid, "AUTH")
     return "AUTH FAILED", 403
 
 @app.route("/edit_info", methods=['POST'])
@@ -155,8 +154,8 @@ def route_get_cert():
 @app.route("/admin", methods=['POST'])
 def route_admin():
     #login token somehow. As it's readonly not much security is needed?
-    token = request.form.get('token')
-    if (token != "Eez5dei8AhPa5die9ohR"):
+    token = request.form.get('admintoken')
+    if (token != os.getenv('ADMIN_STATS_TOKEN')):
         return "AUTH FAILED", 403
     total_issued = 0
     total_valid = 0

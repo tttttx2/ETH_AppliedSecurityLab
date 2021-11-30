@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <title>iMovies</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+    <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet" id="bootstrap-css">
+	<link href="{{ url_for('static', filename='index.css')}}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+  </head>
+  <body>
+    <form method="POST" id="edit_info"></form>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
+   
+          <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">admin stats</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class=" col-md-12 col-lg-12 "> 
+                  <table class="table table-user-information">
+                    <tbody>
+                      <tr>
+                        <td>issued certs:</td>
+                        <td>{{stats['issued']}}</td>
+                      </tr>
+                      <tr>
+                        <td>revoked certs:</td>
+                        <td>{{stats['revoked']}}</td>
+                      </tr>
+                      <tr>
+                        <td>valid certs:</td>
+                        <td>{{stats['valid']}}</td>
+                      </tr>
+                      <tr>
+                        <td>current serial:</td>
+                        <td>{{stats['serial']}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="panel-footer text-right">
+              <form method="post" style="display:inline">
+                <button name="logout" type="submit" value="1" class="btn btn-sm btn-danger">Logout</button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

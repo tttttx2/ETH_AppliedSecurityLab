@@ -30,11 +30,14 @@ services:
         MYSQL_USER: "root2"
         MYSQL_PASS: "chiMi8axaitheivoo3oh"
         REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+        ADMIN_STATS_TOKEN: "uoVei2phooZ3ateevahf"
     volumes:
       - ./core/data:/data
     networks:
         int_net:
             ipv4_address: 10.0.0.10
+    depends_on:
+      - "mysql"
 #------
 # VM 02
   web:

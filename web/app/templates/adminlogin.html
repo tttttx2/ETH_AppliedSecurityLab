@@ -6,23 +6,20 @@
     <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet" id="bootstrap-css">
     <link href="{{ url_for('static', filename='login.css') }}" rel="stylesheet">
     <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
-
   </head>
   <body>
 	<div class="wrapper fadeInDown">
       <div id="formContent">
         <!-- Tabs Titles -->
         <div class="fadeIn first">
-          <h2>iMovies</h2>
+          <h2>iMovies - Admin stats</h2>
         </div>
         <!-- Login Form -->
         <form method="post">
-          <input type="text" id="login" class="fadeIn second" name="uid" placeholder="User ID">
           <input type="password" id="password" class="fadeIn third" name="passwd" placeholder="Password">
 
           <input type="submit" class="fadeIn fourth" value="Login">
         </form>
-
         <div id="formFooter">
         <input type="button" onclick="window.location='https://imovies.ch'" class="fadeIn fifth" style="margin-left:1em; background-color:#6c757d;" value="home">
         {% if error %}

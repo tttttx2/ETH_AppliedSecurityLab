@@ -33,7 +33,7 @@ def test_login():
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
     
     task = "correct passwd"
-    r = session.post(client+"/login", data={"uid":"test", "passwd":"test"})
+    r = session.post(client+"/login", data={"uid":"test", "passwd":"testtest"})
     if (not session.cookies.get_dict()['token']):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
@@ -49,7 +49,7 @@ def test_login():
 def cert_issuing():
     test = "CERT"
     session = requests.Session()
-    r = session.post(client+"/login", data={"uid":"test", "passwd":"test"})
+    r = session.post(client+"/login", data={"uid":"test", "passwd":"testtest"})
     if (session.cookies.get_dict().get('token') == '' or session.cookies.get_dict().get('token')==None):
         print("{} - {}: {}".format(test.ljust(testwidth), "LOGIN FAILED".ljust(taskwidth), str("SKIPPED UNIT").ljust(5)))
         return
@@ -96,35 +96,45 @@ def cert_issuing():
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
 
-
     task = "edit info"
     status=True
-    r = session.post(client+"/", data={"firstname":"NEW2", "lastname":"NEW1", "edit_info":"1", "email":"testnew@imovies.ch", "passwd":"newpass"})
+    r = session.post(client+"/", data={"firstname":"NEW2", "lastname":"NEW1", "edit_info":"1"})
+    session = requests.Session()
+    r = session.post(client+"/login", data={"uid":"test", "passwd":"testtest"})
+    if (session.cookies.get_dict().get('token') == None or session.cookies.get_dict().get('token')==''):
+        status = False
     r = session.get(client+"/")
-    if (( "NEW1" not in r.text or "NEW2" not in r.text or "testnew@imovies" not in r.text)):
+    if (( "NEW1" not in r.text or "NEW2" not in r.text)):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
 
-    task = "logging in with new passwd"
+    task = "change passwd and logging in with new passwd"
     status=True
+    r = session.post(client+"/edit_passwd", data={"passwd": "testtest", "new_passwd": "newpasswd", "confirm_new_passwd": "newpasswd"})
     session = requests.Session()
-    r = session.post(client+"/login", data={"uid":"test", "passwd":"newpass"})
+    r = session.post(client+"/login", data={"uid":"test", "passwd":"newpasswd"})
     if (session.cookies.get_dict().get('token') == None or session.cookies.get_dict().get('token')==''):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
     
     task = "revert info back"
     status=True
-    r = session.post(client+"/", data={"edit_info":"1", "firstname":"test", "lastname":"test", "email":"test@imovies.ch", "passwd":"test"})
+    r = session.post(client+"/", data={"edit_info":"1", "firstname":"TEST", "lastname":"TEST"})
+    r = session.post(client+"/login", data={"uid":"test", "passwd":"newpasswd"})
     r = session.get(client+"/")
     if (("TEST" not in r.text or "TEST" not in r.text or "test@imovies.ch" not in r.text)):
+        status = False
+    r = session.post(client+"/edit_passwd", data={"passwd": "newpasswd", "new_passwd": "testtest", "confirm_new_passwd": "testtest"})
+    session = requests.Session()
+    r = session.post(client+"/login", data={"uid":"test", "passwd":"testtest"})
+    if (session.cookies.get_dict().get('token') == None or session.cookies.get_dict().get('token')==''):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
     
     task = "logging in with reverted passwd"
     status=True
     session = requests.Session()
-    r = session.post(client+"/login", data={"uid":"test", "passwd":"test"})
+    r = session.post(client+"/login", data={"uid":"test", "passwd":"testtest"})
     if (session.cookies.get_dict().get('token') == None or session.cookies.get_dict().get('token')==''):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))

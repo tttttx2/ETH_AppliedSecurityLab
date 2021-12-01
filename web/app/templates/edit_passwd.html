@@ -7,12 +7,20 @@
     <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
     <script type="text/javascript">
+      $(function(){
+        $('#passwd').prop('required',true);
+        $('#new_passwd').prop({'required': true, 'minLength': "8"});
+        $('#confirm_new_passwd').prop({'required': true, 'minLength': "8"});
+      });
       $(document).ready( function() {
-	    $('#new_passwd, #confirm_new_passwd').on('keyup', function () {
+	    $('#new_passwd, #confirm_new_passwd').on('input propertychange', function () {
     	  if ($('#new_passwd').val() == $('#confirm_new_passwd').val()) {
       	    $('#message').html('Matching').css('color', 'green');
-   		  } else 
+            $("#submit").prop("disabled",false);
+          } else {
             $('#message').html('Not Matching').css('color', 'red');
+            $("#submit").prop("disabled",true);
+          }
 	    });
       });
 

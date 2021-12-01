@@ -80,7 +80,37 @@ def route_edit_info():
     mycursor = mydb.cursor()
 
     mycursor.execute("UPDATE users SET firstname=%s, lastname=%s, email=%s WHERE email=%s" , (firstname, lastname, email, email_parsed, ))
+    mydb.commit()
     return "Edit info success", 200
+
+@app.route("/edit_passwd", methods=['POST'])
+def route_edit_passwd():
+    token = request.form.get('token')
+    if(not checkauth(token)):
+        log(request.path, request.data, "AUTH")
+        return "Auth failed", 403
+    email_parsed = parse_email(token)
+
+    passwd = request.form.get('passwd')
+    passwd_sha1 = hashlib.sha1(passwd.encode("UTF-8")).hexdigest()
+
+    mycursor = mydb.cursor()
+
+    mycursor.execute("SELECT email FROM users WHERE email=%s AND pwd=%s" , (email_parsed, passwd_sha1,))
+
+    myresult = mycursor.fetchall()
+    
+    login = (len(myresult) == 1)
+    if login is False:
+        log(request.path, "AUTH FAILED: "+email_parsed, "AUTH")
+        return "AUTH FAILED", 403
+
+    new_passwd = request.form.get('new_passwd')
+    new_passwd_sha1 = hashlib.sha1(new_passwd.encode("UTF-8")).hexdigest()
+
+    mycursor.execute("UPDATE users SET pwd=%s WHERE email=%s" , (new_passwd_sha1, email_parsed, ))
+    mydb.commit()
+    return "Edit password success", 200
 
 
 @app.route("/get_info", methods=['POST'])

@@ -6,7 +6,7 @@ ENV MYSQL_PASSWORD='chiMi8axaitheivoo3oh'
 ENV MYSQL_DATABASE='db'
 #ENV MYSQL_ROOT_HOST='10.0.0.30'
 
-COPY ./dump/* /docker-entrypoint-initdb.d 
+COPY ./dump/* /docker-entrypoint-initdb.d/
 
 
 # NO SSL CONFIG YET

@@ -1,0 +1,66 @@
+<html>
+  <head>
+    <title>iMovies</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet" id="bootstrap-css">
+	<link href="{{ url_for('static', filename='index.css')}}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+    <script type="text/javascript">
+      $(document).ready( function() {
+	    $('#new_passwd, #confirm_new_passwd').on('keyup', function () {
+    	  if ($('#new_passwd').val() == $('#confirm_new_passwd').val()) {
+      	    $('#message').html('Matching').css('color', 'green');
+   		  } else 
+            $('#message').html('Not Matching').css('color', 'red');
+	    });
+      });
+
+    </script>
+  </head>
+  <body>
+    <form method="POST" id="edit_passwd"></form>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
+   
+          <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Hi, {{user_info['uid']}}</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class=" col-md-12 col-lg-12 "> 
+                  <table class="table table-user-information">
+                    <tbody>
+                      <tr>
+                        <td>Current password:</td>
+                        <td><input type="password" name="passwd" form="edit_passwd"></td>
+                      </tr>
+                      <tr>
+                        <td>New password:</td>
+                        <td><input type="password" name="new_passwd" form="edit_passwd" id="new_passwd"></td>
+                      </tr>
+                      <tr>
+                        <td>Repeat new password:</td>
+                        <td><input type="password" name="confirm_new_passwd" form="edit_passwd" id="confirm_new_passwd"></br><span id='message'></span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="panel-footer text-right">
+              <input type="button" onclick="window.location='https://client.imovies.ch'" class="btn btn-sm btn-danger pull-left" value="Back">
+              {% if status %}
+              <span class="status pull-left"><strong>Status: </strong>{{ status }}</span>
+              {% endif %}
+              <button name="edit_passwd" type="submit" value="1" class="btn btn-sm btn-success" form="edit_passwd" id="submit">Set New Password</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

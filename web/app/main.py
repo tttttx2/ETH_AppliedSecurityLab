@@ -65,6 +65,44 @@ def route_index():
     else:
         return redirect(url_for('route_login'))
 
+@app.route('/edit_passwd', methods=['GET', 'POST'])
+def route_edit_passwd():
+    status = None
+    token = request.cookies.get('token')
+    if token is not None:
+        headers = {'X-SERVICE-NAME': os.getenv('SERVICE_NAME')}
+        files = {'token': (None, token)}
+        r = requests.post('https://10.0.0.10/get_info',headers=headers,files=files)
+        if r.status_code is not 200:
+            resp = make_response(redirect('/login'))
+            resp.set_cookie('token', '', expires=0)
+            return resp
+        user_info = r.json()[0]
+        if request.method == 'POST':
+            if request.form['new_passwd'] != request.form['confirm_new_passwd']:
+                status = "Passwords Don't Match!"
+                return make_response(render_template('edit_passwd.html',status=status,user_info=user_info), 403)
+
+
+            files = {
+                'token': (None, token),
+                'passwd': (None, request.form['passwd']),
+                'new_passwd': (None, request.form['new_passwd'])
+            }
+            r = requests.post('https://10.0.0.10/edit_passwd',headers=headers,files=files)
+            if r.status_code is 200:
+                resp = make_response(redirect('/login'))
+                resp.set_cookie('token', '', expires=0)
+                return resp
+            else:
+                status = r.text
+
+        statuscode = 200
+        if (status != None):
+            statuscode = 403
+        return make_response(render_template('edit_passwd.html',status=status,user_info=user_info), statuscode)
+    else:
+        return redirect(url_for('route_login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def route_login():

@@ -6,6 +6,7 @@ from urllib import parse
 import jwt
 import time
 import hashlib
+import re
 
 import base64
 import os
@@ -84,6 +85,8 @@ def route_edit_info():
 
     mycursor.execute("UPDATE users SET firstname=%s, lastname=%s, email=%s WHERE email=%s" , (firstname, lastname, email, email_parsed, ))
     mydb.commit()
+    if email != email_parsed:
+        revoke_certificate(email_parsed)
     return "Edit info success", 200
 
 @app.route("/edit_passwd", methods=['POST'])
@@ -299,9 +302,11 @@ def parse_email(token):
     return email_parsed
 
 def parse_email_raw(email):
-    email_parsed = email #TODO: filter strange email addresses like "asdf+comment@asdf.asdf and parse for secruity
-    return email_parsed
-
+    pattern = re.compile("^\w+@imovies.ch$")
+    if pattern.match(email):
+        return email
+    else:
+        return False
 
 def backup():
     os.system('tar -czf - /data/* | openssl enc -e -aes256 -out /root/backup.tar.gz.enc -pass pass:'+os.getenv('BACKUP_PASSWD'))

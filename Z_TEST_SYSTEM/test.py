@@ -101,13 +101,13 @@ def cert_issuing():
 
     task = "edit info"
     status=True
-    r = session.post(client+"/", data={"firstname":"NEW2", "lastname":"NEW1", "edit_info":"1"})
+    r = session.post(client+"/", data={"firstname":"NEW2", "lastname":"NEW1", "email":"testnew@imovies.ch" ,"edit_info":"1"})
     session = requests.Session()
     r = session.post(client+"/login", data={"uid":"test", "passwd":"testtest"})
     if (session.cookies.get_dict().get('token') == None or session.cookies.get_dict().get('token')==''):
         status = False
     r = session.get(client+"/")
-    if (( "NEW1" not in r.text or "NEW2" not in r.text)):
+    if (( "NEW1" not in r.text or "NEW2" not in r.text or "testnew@imovies" not in r.text)):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
 
@@ -122,7 +122,7 @@ def cert_issuing():
     
     task = "revert info back"
     status=True
-    r = session.post(client+"/", data={"edit_info":"1", "firstname":"TEST", "lastname":"TEST"})
+    r = session.post(client+"/", data={"edit_info":"1", "firstname":"TEST", "lastname":"TEST", "email":"test@imovies.ch"})
     r = session.post(client+"/login", data={"uid":"test", "passwd":"newpasswd"})
     r = session.get(client+"/")
     if (("TEST" not in r.text or "TEST" not in r.text or "test@imovies.ch" not in r.text)):

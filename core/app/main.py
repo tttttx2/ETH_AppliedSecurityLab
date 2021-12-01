@@ -5,6 +5,7 @@ from flask import send_file
 from urllib import parse
 import jwt
 import time
+import hashlib
 
 import base64
 import os
@@ -142,14 +143,16 @@ def route_verify_cert():
     # Client certificate in PEM format
     cert = parse.unquote(cert_enc)
 
+    name = hashlib.md5(cert.encode('ascii')).hexdigest()
+
     # Check if certificate exsits locally,
-    with open("/data/tmp/test", mode='w+') as f:
+    with open("/data/tmp/" + str(name), mode='w+') as f:
         f.write(cert)
 
-    res = os.popen("openssl verify -verbose -CAfile /data/myCA.pem /data/tmp/test").read()
+    res = os.popen("openssl verify -verbose -CAfile /data/myCA.pem /data/tmp/"+str(name)).read()
     #return res
     if "OK" in res and not_revoked(cert):
-        email = os.popen("openssl x509 -noout -in /data/tmp/test -email").read()
+        email = os.popen("openssl x509 -noout -in /data/tmp/"+str(name)+" -email").read()
         email = "".join(email.split())
         token = gen_token(email)
         return token

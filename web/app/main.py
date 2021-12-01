@@ -96,7 +96,10 @@ def route_edit_passwd():
             r = requests.post('https://10.0.0.10/edit_passwd',headers=headers,files=files)
             if r.status_code == 200:
                 resp = make_response(redirect('/login'))
-                resp.set_cookie('token', '', expires=0)
+                resp.set_cookie('token', '', expires=0, domain='.imovies.ch')
+                resp.set_cookie('token', '', expires=0, domain='imovies.ch')
+                resp.set_cookie('token', '', expires=0, domain='client.imovies.ch')
+                resp.set_cookie('token', '', expires=0, domain='verify.imovies.ch')
                 return resp
             else:
                 status = r.text

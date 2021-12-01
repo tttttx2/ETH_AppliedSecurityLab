@@ -122,12 +122,12 @@ def route_get_info():
         log(request.path, request.data, "AUTH")
         return "Auth failed", 403
     email_parsed = parse_email(token)
-
     mycursor = mydb.cursor()
 
     mycursor.execute("SELECT uid, lastname, firstname, email FROM users WHERE email=%s" , (email_parsed, ))
     row_headers=[x[0] for x in mycursor.description]
     myresult = mycursor.fetchall()
+    #return str(myresult)
     json_data=[]
     for result in myresult:
         json_data.append(dict(zip(row_headers,result)))
@@ -146,15 +146,17 @@ def route_verify_cert():
     with open("/data/tmp/test", mode='w+') as f:
         f.write(cert)
 
-    res = os.popen("openssl verify -verbose -CAfile myCA.pem /data/tmp/test").read()
+    res = os.popen("openssl verify -verbose -CAfile /data/myCA.pem /data/tmp/test").read()
+    #return res
     if "OK" in res and not_revoked(cert):
         email = os.popen("openssl x509 -noout -in /data/tmp/test -email").read()
+        email = "".join(email.split())
         token = gen_token(email)
-        return token, 200
+        return token
 
     else:
         log(request.path, request.data, "AUTH WITH CLIENT CERT FAILED")
-        return "Auth failed", 403
+        return res, 403
         
 
     #openssl x509 -noout -in client.pem -email

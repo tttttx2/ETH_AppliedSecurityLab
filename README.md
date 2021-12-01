@@ -12,19 +12,21 @@ For production purposes setup the VMs provided during the group exchange. They'r
 Make sure to start in the following order: 00, 05, 04, 03, 01, 02
 
 # Access
-If networking on your setup works as intended, you should be able to ping 10.0.0.5  
-*.imovies.ch resolves to 10.0.0.5
+If networking on your setup works as intended, you should be able to ping 10.0.1.5. Otherwise please try adding a static route `sudo ip route add 10.0.1.5 dev vboxnet1` and make sure vboxnet1 is configured properly.
+*.imovies.ch resolves to 10.0.1.5
 
-A simple landing page is located on [https://imovies.ch/](https://imovies.ch/)
+In case this does not work as expected, feel free to overwrite this in the hosts file of your host machine to update those addresses to the one issued on the host-only adapter of `VM 00`
+
+A simple landing page is located on [https://imovies.ch/](https://imovies.ch/) (and yes, we seriously just bought the domain for your convenience)
 
 Access the client web interface on [https://client.imovies.ch](https://client.imovies.ch)  
 Access to the logging server is on [https://logs.imovies.ch](https://logs.imovies.ch)  
 Access to the admin web interface is on [https://client.imovies.ch/admin](https://client.imovies.ch/admin)  
 
 Admin credentials are: `admin:uoVei2phooZ3ateevahf`  
-Test credentials are: `test:test`  
+Test credentials are: `test:testtest`  
 
-SSH access is done using VM 00 as a jumphost. SSH certificate for the user `root` (with key password `uoVei2phooZ3ateevahf`) are the same as above located in the folder `Z_VM_installer` or as seen below.
+SSH access is done using VM 00 as a jumphost. SSH certificate for the user `administrator` (with key password `uoVei2phooZ3ateevahf`) are the same as above located in the folder `Z_VM_installer` or as seen below.
 
 Predefined user credentials are defined in the project description
 
@@ -77,23 +79,52 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC+2I99g1sHn4mQZQHeamgr1enBvnnvPiJv+TPLgcwS
 ```
 
 # Containers distributed on VMs
-The process of setting up VMs is not fully automated, however files in `Z_VM_installer` are helpful.
+The process of setting up VMs is not fully automated, however files in `Z_VM_installer` are helpful. Network adapters are as defined below, the ones disconnected are only used during development. Bridged networks allow internet access (if the static IP of the VM is compatible with your network setup. Currently 192.168.1.240-245 are assigned statically. Check/modify the netplan config in /etc/netplan/). The config for host-only should be: no DHCP, IP is 10.0.1.100/16. Maybe needs a static route to 10.0.1.5 on your host machine.
 ## 00 - proxy
+### containers
 reverse_proxy
+### Network adapter
+NET_ADAPTER_0: internal, imovies  
+NET_ADAPTER_1: host-only, connected  
+NET_ADAPTER_2: bridged, not connected
 ## 01 - core
+### containers
 core
+### Network adapter
+NET_ADAPTER_0: internal, imovies  
+NET_ADAPTER_1: host-only, not connected  
+NET_ADAPTER_2: bridged, not connected
 ## 02 - web
+### containers
 web
+### Network adapter
+NET_ADAPTER_0: internal, imovies  
+NET_ADAPTER_1: host-only, not connected  
+NET_ADAPTER_2: bridged, not connected
 ## 03 - mysql
+### containers
 mysql  
 mysql_store
+### Network adapter
+NET_ADAPTER_0: internal, imovies  
+NET_ADAPTER_1: host-only, not connected  
+NET_ADAPTER_2: bridged, not connected
 ## 04 - log
+### containers
 logging_view  
 logging_store  
 logging_rsyslog
+### Network adapter
+NET_ADAPTER_0: internal, imovies  
+NET_ADAPTER_1: host-only, not connected  
+NET_ADAPTER_2: bridged, not connected
 ## 05 - backup
+### containers
 backup
-
+### Network adapter
+NET_ADAPTER_0: internal, imovies  
+NET_ADAPTER_1: host-only, not connected  
+NET_ADAPTER_2: bridged, not connected
 
 
 # Further Notes
@@ -102,9 +133,11 @@ backup
 
 ## letsencrypt certificate
 the cert used on reverse_proxy was generated using
-
 ```bash
 sudo certbot certonly --manual --preferred-challenges=dns -d *.imovies.ch
 ```
 ## internal CA
 For internal networking purposes, https traffic uses the internal CA found in `Z_internal_CA`
+
+## reset DB
+In case you want to reset the DB to it's initial state, delete all contents in /root/mysql/data/ on VM03

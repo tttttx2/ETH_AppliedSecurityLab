@@ -12,9 +12,9 @@ netplanconfig () {
 # split development compose setup into vms
 csplit -z ../docker-compose.yml /#------/ {*}
 
-echo 'version: "3.9"' > version
+echo 'version: "3.3"' > version
 
-echo 'services: ' > version
+echo 'services: ' >> version
 for file in xx*; do
     newName=$(egrep -o '# VM [0-9]{2}' $file)
     newFile=${newName:5}/docker-compose.yml

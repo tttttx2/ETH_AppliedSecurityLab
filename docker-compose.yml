@@ -13,6 +13,8 @@ services:
         REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
     build: ./reverse_proxy
     networks:
+        ext_net:
+            ipv4_address: 10.0.1.5
         int_net:
             ipv4_address: 10.0.0.5
 #------
@@ -89,6 +91,7 @@ services:
   logging_store:
     build: ./logging_store
     ports:
+      #EXPOSETHIS
       - 10400:443
     environment:
         SERVICE_NAME: "log"
@@ -153,3 +156,8 @@ networks:
             driver: default
             config:
                 - subnet: 10.0.0.0/24
+    ext_net:
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.0.1.5/24

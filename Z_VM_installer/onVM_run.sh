@@ -1,5 +1,5 @@
 #!/bin/bash 
 ## RUN THIS AS ROOT!
 
-cd /root/
+cd /root
 docker-compose up -d

@@ -4,3 +4,8 @@ mysql/data
 mysql/data/*
 
 backup/data/*.enc
+
+core/data/revoked/*
+core/data/issued/*
+core/data/newcerts/*
+core/data/tmp/*

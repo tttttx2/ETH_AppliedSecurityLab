@@ -1,5 +1,17 @@
 #!/bin/bash
 
+sudo rm -rf ../mysql/data/*
+
+sudo sh -c 'echo "00" > ../core/data/sernumber'
+sudo sh -c 'echo "00" > ../core/data/crlnumber'
+sudo sh -c 'echo -n "" > ../core/data/index.txt'
+sudo sh -c 'echo -n "" > ../core/data/crl.pem'
+sudo rm ../core/data/newcerts/*
+sudo rm ../core/data/issued/*
+sudo rm ../core/data/revoked/*
+sudo rm ../core/data/tmp/*
+
+
 netplanconfig () {
   nr=${file:3}
   if [ "$nr" -eq "0" ]; then

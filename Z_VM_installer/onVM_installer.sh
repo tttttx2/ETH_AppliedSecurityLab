@@ -8,7 +8,12 @@ echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC+2I99g1sHn4mQZQHeamgr1enBvnnvPiJv+T
 
 
 # setup src files
+cd /home/administrator/0*
+
 rm deploy.sh
+rm netplan.yaml
+find /root/ -type f -not -name 'snap' -delete
+find /root/ -type d -not -name 'snap' -delete
 mv * /root/
 mv .* /root/
 
@@ -19,4 +24,5 @@ systemctl enable docker.service
 systemctl enable containerd.service
 systemctl enable imovies.service
 
-
+cd /root/
+docker-compose build

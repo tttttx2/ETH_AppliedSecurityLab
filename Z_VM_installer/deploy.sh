@@ -24,7 +24,3 @@ case "$1" in
     exit 1
     ;;
 esac
-
-
-#scp -r 00 administrator@192.168.1.241:/home/administrator/
-#scp -r 01 administrator@192.168.1.242:/home/administrator/

@@ -97,6 +97,9 @@ backup
 
 
 # Further Notes
+
+![network_as_lab_overview](https://github.com/tttttx2/ETH_AppliedSecurityLab/blob/main/network_as_lab_overview.png)
+
 ## letsencrypt certificate
 the cert used on reverse_proxy was generated using
 

@@ -15,42 +15,41 @@ def route_index():
         headers = {'X-SERVICE-NAME': os.getenv('SERVICE_NAME')}
         files = {'token': (None, token)}
         r = requests.post('https://10.0.0.10/get_info',headers=headers,files=files)
-        if r.status_code is not 200:
+        if r.status_code != 200:
             resp = make_response(redirect('/login'))
             resp.set_cookie('token', '', expires=0)
             return resp
         user_info = r.json()[0]
+        print(token)
         if request.method == 'POST':
             if "create" in request.form:
                 r = requests.post('https://10.0.0.10/create_cert',headers=headers,files=files)
-                if r.status_code is not 200:
+                if r.status_code != 200:
                     status = r.text
             elif "download" in request.form: 
                 r = requests.post('https://10.0.0.10/get_cert',headers=headers,files=files)
-                if r.status_code is not 200:
+                if r.status_code != 200:
                     status = r.text
                 else:
                     byte_io = BytesIO(r.content)
                     return send_file(byte_io, download_name='cert.pfx',as_attachment=True)
             elif "revoke" in request.form: 
                 r = requests.post('https://10.0.0.10/revoke_cert',headers=headers,files=files)
-                if r.status_code is not 200:
+                if r.status_code != 200:
                     status = r.text
             elif "edit_info" in request.form: 
                 if request.form['firstname'].strip() != user_info['firstname'] or \
-                   request.form['email'].strip() != user_info['email'] or \
-                   request.form['lastname'].strip()  != user_info['lastname']:
+                   request.form['lastname'].strip() != user_info['lastname']:
                     files = {
                         'token': (None, token),
                         'firstname': (None, request.form['firstname'].strip()),
                         'lastname': (None, request.form['lastname'].strip()),
-                        'email': (None, request.form['email'].strip())
-                        #'passwd': (None, request.form['passwd'].strip())
+                        'email': (None, user_info['email'].strip())
                     }
                     r = requests.post('https://10.0.0.10/edit_info',headers=headers,files=files)
-                    r = requests.post('https://10.0.0.10/get_info',headers=headers,files=files)
-                    user_info = r.json()[0]
-                    return redirect(request.referrer)
+                    resp = make_response(redirect('/login'))
+                    resp.set_cookie('token', '', expires=0)
+                    return resp
             elif "logout" in request.form: 
                 resp = make_response(redirect('/login'))
                 resp.set_cookie('token', '', expires=0)
@@ -74,13 +73,16 @@ def route_edit_passwd():
         headers = {'X-SERVICE-NAME': os.getenv('SERVICE_NAME')}
         files = {'token': (None, token)}
         r = requests.post('https://10.0.0.10/get_info',headers=headers,files=files)
-        if r.status_code is not 200:
+        if r.status_code != 200:
             resp = make_response(redirect('/login'))
             resp.set_cookie('token', '', expires=0)
             return resp
         user_info = r.json()[0]
         if request.method == 'POST':
-            if request.form['new_passwd'] != request.form['confirm_new_passwd']:
+            if len(request.form['new_passwd']) < 8:
+                status = "Password must be at least 8 characters!"
+                return make_response(render_template('edit_passwd.html',status=status,user_info=user_info), 403)
+            elif request.form['new_passwd'] != request.form['confirm_new_passwd']:
                 status = "Passwords Don't Match!"
                 return make_response(render_template('edit_passwd.html',status=status,user_info=user_info), 403)
 
@@ -91,7 +93,7 @@ def route_edit_passwd():
                 'new_passwd': (None, request.form['new_passwd'])
             }
             r = requests.post('https://10.0.0.10/edit_passwd',headers=headers,files=files)
-            if r.status_code is 200:
+            if r.status_code == 200:
                 resp = make_response(redirect('/login'))
                 resp.set_cookie('token', '', expires=0)
                 return resp
@@ -131,7 +133,7 @@ def route_login():
             'passwd': (None, request.form['passwd']),
         }
         r = requests.post('https://10.0.0.10/login',headers=headers,files=files)
-        if r.status_code is not 200:
+        if r.status_code != 200:
             error = r.text
         else:
             resp = make_response(redirect('/'))
@@ -150,7 +152,7 @@ def login_admin():
             'admintoken': (None, request.form['passwd']),
         }
         r = requests.post('https://10.0.0.10/admin',headers=headers,files=files)
-        if r.status_code is not 200:
+        if r.status_code != 200:
             error = r.text
         else:
             resp = make_response(redirect('/admin/stats'))
@@ -177,7 +179,7 @@ def stats_admin():
         'admintoken': (None, admintoken),
     }
     r = requests.post('https://10.0.0.10/admin',headers=headers,files=files)
-    if r.status_code is not 200:
+    if r.status_code != 200:
         resp = make_response(redirect('/admin'))
         return resp
     else:

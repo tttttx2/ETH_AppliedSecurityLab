@@ -6,6 +6,13 @@
     <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet" id="bootstrap-css">
 	<link href="{{ url_for('static', filename='index.css')}}" rel="stylesheet">
     <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+    <script type="text/javascript">
+      $(function(){
+        $('#firstname').prop('required',true);
+        $('#lastname').prop({'required': true});
+        $('#id_email').prop({'required': true, 'email': true});
+      });
+    </script>
   </head>
   <body>
     <form method="POST" id="edit_info"></form>
@@ -28,15 +35,15 @@
                       </tr>
                       <tr>
                         <td>First Name:</td>
-                        <td><input type="text" name="firstname" value={{user_info['firstname']}} form=edit_info></td>
+                        <td><input type="text" id="firstname" name="firstname" value={{user_info['firstname']}} form=edit_info></td>
                       </tr>
                       <tr>
                         <td>Last Name:</td>
-                        <td><input type="text" name="lastname" value={{user_info['lastname']}} form=edit_info></td>
+                        <td><input type="text" id="lastname" name="lastname" value={{user_info['lastname']}} form=edit_info></td>
                       </tr>
                       <tr>
                         <td>Email</td>
-                        <td><a href="mailto:{{user_info['email']}}">{{user_info['email']}}</a></td>
+                        <td><input type="email" id="id_email" name="email" value={{user_info['email']}} form=edit_info></td>
                       </tr>
                     </tbody>
                   </table>

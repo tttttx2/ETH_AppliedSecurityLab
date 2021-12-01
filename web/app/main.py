@@ -40,17 +40,21 @@ def route_index():
                     status = r.text
             elif "edit_info" in request.form: 
                 if request.form['firstname'].strip() != user_info['firstname'] or \
-                   request.form['lastname'].strip() != user_info['lastname']:
+                   request.form['lastname'].strip() != user_info['lastname'] or \
+                   request.form['email'].strip() != user_info['email']:
                     files = {
                         'token': (None, token),
                         'firstname': (None, request.form['firstname'].strip()),
                         'lastname': (None, request.form['lastname'].strip()),
-                        'email': (None, user_info['email'].strip())
+                        'email': (None, request.form['email'].strip())
                     }
                     r = requests.post('https://10.0.0.10/edit_info',headers=headers,files=files)
-                    resp = make_response(redirect('/login'))
-                    resp.set_cookie('token', '', expires=0)
-                    return resp
+                    if r.status_code != 200:
+                        status = r.text
+                    else:
+                        resp = make_response(redirect('/login'))
+                        resp.set_cookie('token', '', expires=0)
+                        return resp
             elif "logout" in request.form: 
                 resp = make_response(redirect('/login'))
                 resp.set_cookie('token', '', expires=0)

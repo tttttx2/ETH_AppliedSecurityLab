@@ -107,7 +107,23 @@ def route_edit_passwd():
 @app.route('/login', methods=['GET', 'POST'])
 def route_login():
     error = None
-    if request.method == 'POST':
+
+    cert_enc = request.headers.get('X-SSL-CERT')
+    
+    # Check first if any certificate was provided
+    if cert_enc and request.headers.get('Host').startswith('verify.'):
+        #return cert_enc
+        headers = {'X-SERVICE-NAME': os.getenv('SERVICE_NAME')}
+        r = requests.post('https://10.0.0.10/verify_cert',headers=headers, data={'cert': cert_enc})
+       
+        token = r.text
+        return token
+        #resp = make_response(redirect('/'))
+        #resp.set_cookie('token', token)
+        #return resp
+       # error = r.text
+
+    elif request.method == 'POST':
         headers = {'X-SERVICE-NAME': os.getenv('SERVICE_NAME')}
         files = {
             'uid': (None, request.form['uid']),

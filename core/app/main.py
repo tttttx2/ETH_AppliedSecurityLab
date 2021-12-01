@@ -1,6 +1,8 @@
+from abc import get_cache_token
 from flask import Flask
 from flask import request
 from flask import send_file
+from urllib import parse
 import jwt
 import time
 
@@ -134,7 +136,28 @@ def route_get_info():
 @app.route("/verify_cert", methods=['POST'])
 def route_verify_cert():
     #TODO
-    return "cert valid"
+    #return "cert valid"
+    cert_enc = request.form.get('cert')
+
+    # Client certificate in PEM format
+    cert = parse.unquote(cert_enc)
+
+    # Check if certificate exsits locally,
+    with open("/data/tmp/test", mode='w+') as f:
+        f.write(cert)
+
+    res = os.popen("openssl verify -verbose -CAfile myCA.pem /data/tmp/test").read()
+    if "OK" in res and not_revoked(cert):
+        email = os.popen("openssl x509 -noout -in /data/tmp/test -email").read()
+        token = gen_token(email)
+        return token, 200
+
+    else:
+        log(request.path, request.data, "AUTH WITH CLIENT CERT FAILED")
+        return "Auth failed", 403
+        
+
+    #openssl x509 -noout -in client.pem -email
 
 @app.route("/revoke_cert", methods=['POST'])
 def route_revoke_cert():
@@ -348,6 +371,9 @@ def revoke_certificate(email_parsed):
     if (returncode != 0):
         print("ERROR revoking certificate! 2")
         return False
+    return True
+
+def not_revoked(cert):
     return True
 
 if __name__ == "__main__":

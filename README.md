@@ -9,7 +9,7 @@ sudo docker-compose up --build
 ```
 ## Use distributed VMs
 For production purposes setup the VMs provided during the group exchange. They're basically just ubuntu server VMs with networking setup as compatible as possible to the docker-compose configuration.
-Make sure to start in the following order: 00, 05, 04, 03, 01, 02
+Make sure to start in the following order: 05, 04, 03, 01, 02, 00
 
 # Access
 If networking on your setup works as intended, you should be able to ping 10.0.1.5. Otherwise please try adding a static route `sudo ip route add 10.0.1.5 dev vboxnet1` and make sure vboxnet1 is configured properly.
@@ -26,9 +26,9 @@ Access to the admin web interface is on [https://client.imovies.ch/admin](https:
 Admin credentials are: `admin:uoVei2phooZ3ateevahf`  
 Test credentials are: `test:testtest`  
 
-SSH access is done using VM 00 as a jumphost. SSH certificate for the user `administrator` (with key password `uoVei2phooZ3ateevahf`) are the same as above located in the folder `Z_VM_installer` or as seen below.
-
 Predefined user credentials are defined in the project description
+
+SSH access is done using VM 00 as a jumphost. SSH certificate for the user `administrator` (with key password `uoVei2phooZ3ateevahf`) (or password which is the same as above) is located in the folder `Z_VM_installer` or as seen below.
 
 root SSH privkey
 ```
@@ -79,7 +79,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC+2I99g1sHn4mQZQHeamgr1enBvnnvPiJv+TPLgcwS
 ```
 
 # Containers distributed on VMs
-The process of setting up VMs is not fully automated, however files in `Z_VM_installer` are helpful. Network adapters are as defined below, the ones disconnected are only used during development. Bridged networks allow internet access (if the static IP of the VM is compatible with your network setup. Currently 192.168.1.240-245 are assigned statically. Check/modify the netplan config in /etc/netplan/). The config for host-only should be: no DHCP, IP is 10.0.1.100/16. Maybe needs a static route to 10.0.1.5 on your host machine.
+The process of setting up VMs is not fully automated, however files in `Z_VM_installer` are helpful. Network adapters are as defined below, the ones disconnected are only used during development. Bridged networks allow internet access (if the static IP of the VM is compatible with your network setup. Currently 192.168.1.240-245 are assigned statically. Check/modify the netplan config in /etc/netplan/). The config for host-only should be: no DHCP, IP is 10.0.1.100/24. Maybe needs a static route to 10.0.1.5 on your host machine.
 ## 00 - proxy
 ### containers
 reverse_proxy

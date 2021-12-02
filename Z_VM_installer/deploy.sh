@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Remember to turn on the bridged network to get internet access for deployment"
+
 case "$1" in
   "00")
     scp -r 00 administrator@192.168.1.240:/home/administrator/
@@ -24,3 +26,5 @@ case "$1" in
     exit 1
     ;;
 esac
+
+echo "login on VM $1 via SSH, cd to /home/administrator/$1 and execute ./onVM_installer.sh." 

@@ -25,4 +25,4 @@ systemctl enable containerd.service
 systemctl enable imovies.service
 
 cd /root/
-docker-compose build
+docker-compose build && sudo reboot

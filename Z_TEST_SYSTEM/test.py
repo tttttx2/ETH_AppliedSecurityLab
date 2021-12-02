@@ -179,48 +179,54 @@ def test_logs():
     task = "log running on 10.0.0.10 (past 1h)"
     status = True
     r = requests.get(logs+"/10.0.0.10/", auth=("admin", "uoVei2phooZ3ateevahf"))
-    d = datetime.utcnow() - timedelta(hours=0)
-    if (not (d.strftime("%d-%b-%Y %H") in r.text or d.strftime("%d-%b-%Y %H") in r.text)):
+    d1 = (datetime.utcnow() - timedelta(hours=0)).strftime("%d-%b-%Y %H")
+    d2 = (datetime.utcnow() - timedelta(hours=1)).strftime("%d-%b-%Y %H")
+    if (not (d1 in r.text or d2 in r.text)):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
-    
+        
     task = "log running on 10.0.0.20 (past 1h)"
     status = True
     r = requests.get(logs+"/10.0.0.20/", auth=("admin", "uoVei2phooZ3ateevahf"))
-    d = datetime.utcnow() - timedelta(hours=0)
-    if (not (d.strftime("%d-%b-%Y %H") in r.text or d.strftime("%d-%b-%Y %H") in r.text)):
+    d1 = (datetime.utcnow() - timedelta(hours=0)).strftime("%d-%b-%Y %H")
+    d2 = (datetime.utcnow() - timedelta(hours=1)).strftime("%d-%b-%Y %H")
+    if (not (d1 in r.text or d2 in r.text)):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
     
     task = "log running on 10.0.0.30 (past 1h)"
     status = True
     r = requests.get(logs+"/10.0.0.30/", auth=("admin", "uoVei2phooZ3ateevahf"))
-    d = datetime.utcnow() - timedelta(hours=0)
-    if (not (d.strftime("%d-%b-%Y %H") in r.text or d.strftime("%d-%b-%Y %H") in r.text)):
+    d1 = (datetime.utcnow() - timedelta(hours=0)).strftime("%d-%b-%Y %H")
+    d2 = (datetime.utcnow() - timedelta(hours=1)).strftime("%d-%b-%Y %H")
+    if (not (d1 in r.text or d2 in r.text)):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
     
     task = "log running on 10.0.0.41 (past 1h)"
     status = True
     r = requests.get(logs+"/10.0.0.41/", auth=("admin", "uoVei2phooZ3ateevahf"))
-    d = datetime.utcnow() - timedelta(hours=0)
-    if (not (d.strftime("%d-%b-%Y %H") in r.text or d.strftime("%d-%b-%Y %H") in r.text)):
+    d1 = (datetime.utcnow() - timedelta(hours=0)).strftime("%d-%b-%Y %H")
+    d2 = (datetime.utcnow() - timedelta(hours=1)).strftime("%d-%b-%Y %H")
+    if (not (d1 in r.text or d2 in r.text)):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
     
     task = "log running on 10.0.0.50 (past 1h)"
     status = True
     r = requests.get(logs+"/10.0.0.50/", auth=("admin", "uoVei2phooZ3ateevahf"))
-    d = datetime.utcnow() - timedelta(hours=0)
-    if (not (d.strftime("%d-%b-%Y %H") in r.text or d.strftime("%d-%b-%Y %H") in r.text)):
+    d1 = (datetime.utcnow() - timedelta(hours=0)).strftime("%d-%b-%Y %H")
+    d2 = (datetime.utcnow() - timedelta(hours=1)).strftime("%d-%b-%Y %H")
+    if (not (d1 in r.text or d2 in r.text)):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
     
     task = "log running on 10.0.0.5 (past 1h)"
     status = True
     r = requests.get(logs+"/10.0.0.5/", auth=("admin", "uoVei2phooZ3ateevahf"))
-    d = datetime.utcnow() - timedelta(hours=0)
-    if (not (d.strftime("%d-%b-%Y %H") in r.text or d.strftime("%d-%b-%Y %H") in r.text)):
+    d1 = (datetime.utcnow() - timedelta(hours=0)).strftime("%d-%b-%Y %H")
+    d2 = (datetime.utcnow() - timedelta(hours=1)).strftime("%d-%b-%Y %H")
+    if (not (d1 in r.text or d2 in r.text)):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
 
@@ -232,25 +238,26 @@ def test_net():
     test = "NET"
     task = "ping VM 00 successful (DNS)"
     status = True
-    r = os.system("ping imovies.ch -c 1 -w 5000 &> /dev/null")
+    r = os.system("ping imovies.ch -c 1 -W 5 &> /dev/null")
     if (r!=0):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
     
     task = "ping VM 00 successful (IP)"
     status = True
-    r = os.system("ping 10.0.1.5 -c 1 -w 5000 &> /dev/null")
+    r = os.system("ping 10.0.1.5 -c 1 -W 5 &> /dev/null")
     if (r!=0):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
     
     task = "ping VM 00 internal blocked"
     status = True
-    r = os.system("ping 10.0.0.5 -c 1 -w 5000 &> /dev/null")
+    r = os.system("ping 10.0.0.5 -c 1 -W 5 &> /dev/null")
     if (r==0):
         status = False
     print("{} - {}: {}".format(test.ljust(testwidth), task.ljust(taskwidth), str(status).ljust(5)))
     
+
 test_crl()
 test_login()
 cert_issuing()

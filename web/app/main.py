@@ -198,14 +198,18 @@ def stats_admin():
 @app.route('/crl', methods=['GET'])
 def download_crl():
     path = '/crl.pem'
+    token = request.args.get('token')
+    if token == None:
+        token = ""
+    print(token)
     exists = os.path.isfile(path)
-    if not exists:
-        r = requests.get('https://10.0.0.10/generate_crl', allow_redirects=True)
+    if not exists or token != "":
+        r = requests.get('https://10.0.0.10/generate_crl', allow_redirects=True, params = {"token":token})
         open(path, 'wb').write(r.content)
         
     modifytime = os.path.getmtime(path)
     if time.time() - modifytime > 1000:
-        r = requests.get('https://10.0.0.10/generate_crl', allow_redirects=True)
+        r = requests.get('https://10.0.0.10/generate_crl', allow_redirects=True, params = {"token":token})
         open(path, 'wb').write(r.content)
         
     return send_file(path, as_attachment=True), 200

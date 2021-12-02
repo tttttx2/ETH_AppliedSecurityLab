@@ -12,6 +12,8 @@ services:
     environment:
         REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
     build: ./reverse_proxy
+    volumes:
+      - /opt/proxy_pass/:/proxy_pass:ro
     networks:
         ext_net:
             ipv4_address: 10.0.1.5
@@ -35,6 +37,7 @@ services:
         ADMIN_STATS_TOKEN: "uoVei2phooZ3ateevahf"
     volumes:
       - ./core/data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
         int_net:
             ipv4_address: 10.0.0.10

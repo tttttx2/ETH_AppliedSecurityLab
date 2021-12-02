@@ -16,7 +16,7 @@ RUN pip install mysql-connector-python
 RUN pip install requests
 
 RUN apt update
-RUN apt install -y rsyslog default-mysql-client cron
+RUN apt install -y rsyslog default-mysql-client cron docker docker-compose
 
 COPY ./rsyslog.conf /etc/rsyslog.conf
 

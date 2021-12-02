@@ -242,7 +242,11 @@ def route_admin():
 
 @app.route("/generate_crl") #should be called from main landingpage webserver periodically to publish newest CRL
 def route_generate_crl():
-    returncode = os.system('openssl ca -config /etc/ssl/openssl.cnf -gencrl -out /data/crl.pem -passin pass:'+os.getenv('CA_CERT_PASSWD'))
+    token = request.args.get('token')
+    if token == None:
+        token = ""
+    print(token)
+    returncode = os.system('openssl ca -config /etc/ssl/openssl.cnf -gencrl -out /data/crl.pem -passin pass:'+os.getenv('CA_CERT_PASSWD') + str(token))
     if(returncode == 0):
         log(request.path, "***CRL GENERATED***")
         return send_file('/data/crl.pem', as_attachment=True), 200

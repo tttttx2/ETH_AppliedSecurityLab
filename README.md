@@ -27,6 +27,7 @@ Admin credentials are: `admin:uoVei2phooZ3ateevahf`
 Test credentials are: `test:testtest`  
 
 Predefined user credentials are defined in the project description
+Each exported certificate is protected with the password `imovies`.
 
 SSH access is done using VM 00 as a jumphost. SSH certificate for the user `administrator` (with key password `uoVei2phooZ3ateevahf`) (or password which is the same as above) is located in the folder `Z_VM_installer` or as seen below.
 

@@ -358,7 +358,7 @@ def create_certificate(email_parsed):
     
     returncode += os.system('openssl req -new -nodes -sha256 -newkey rsa:2048 -keyout '+filename+'.key -out '+filename+'.csr -subj "/emailAddress='+email_parsed+'/CN=imovies.ch/O=imovies email/OU=iMovies email/C=CH/ST=Zuerich/L=Zuerich"')
     returncode += os.system('openssl ca -batch -config /etc/ssl/openssl.cnf -extensions usr_cert -notext -md sha256 -in '+filename+'.csr -out '+filename+'.crt -passin pass:'+os.getenv('CA_CERT_PASSWD'))
-    returncode += os.system('openssl pkcs12 -export -in '+filename+'.crt -inkey '+filename+'.key -out '+filename+'.pfx -passout pass:')
+    returncode += os.system('openssl pkcs12 -export -in '+filename+'.crt -inkey '+filename+'.key -out '+filename+'.pfx -passout pass:imovies')
     
     sernr_generated=get_sernr_from_email(email_parsed)
     if(sernr_generated == False or returncode != 0):
